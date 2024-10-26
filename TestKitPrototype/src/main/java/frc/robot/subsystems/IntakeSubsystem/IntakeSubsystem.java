@@ -4,21 +4,26 @@
 
 package frc.robot.subsystems.IntakeSubsystem;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
   private final IntakeIO io;
+  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+
 
   /** Creates a new OnOffSubsystem. */
   public IntakeSubsystem() {
-    io = new IntakeIO() {};
+    io = new IntakeIOReal() {};
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("Intake", inputs);
   }
 
   public Command runMotor() {

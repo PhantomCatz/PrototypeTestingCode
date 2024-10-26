@@ -4,20 +4,27 @@
 
 package frc.robot.subsystems.OnOffSubsystem;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.PositionSubsystem.PositionIOInputsAutoLogged;
 
 public class OnOffSubsystem extends SubsystemBase {
 
   private final OnOffIO io;
+  private final OnOffIOInputsAutoLogged inputs = new OnOffIOInputsAutoLogged();
+
 
   /** Creates a new OnOffSubsystem. */
   public OnOffSubsystem() {
-    io = new OnOffIO() {};
+    io = new OnOffIOReal() {};
   }
 
   @Override
   public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("OnOff", inputs);
     // This method will be called once per scheduler run
   }
 

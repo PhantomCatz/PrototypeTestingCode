@@ -10,6 +10,8 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeSubsystem;
 import frc.robot.subsystems.OnOffSubsystem.OnOffSubsystem;
+import frc.robot.subsystems.PositionSubsystem.PositionSubsystem;
+import frc.robot.subsystems.VelocitySubsystem.VelocitySubsystem;
 import frc.robot.subsystems.OnOffSubsystem.OnOffIOReal;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,10 +29,12 @@ public class RobotContainer {
 
   private static OnOffSubsystem OnOffSubsystem = new OnOffSubsystem();
   private static IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
+  private static PositionSubsystem PositionSubsystem = new PositionSubsystem();
+  private static VelocitySubsystem VelocitySubsystem = new VelocitySubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private CommandXboxController xboxDrv = new CommandXboxController(0);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -49,11 +53,16 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    // new Trigger(m_exampleSubsystem::exampleCondition)
+    //     .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    m_driverController.a().onTrue(OnOffSubsystem.toggleOnOffMotor());
-    m_driverController.b().onTrue(IntakeSubsystem.runMotor());
+    xboxDrv.a().onTrue(OnOffSubsystem.toggleOnOffMotor());
+    xboxDrv.b().whileTrue(IntakeSubsystem.runMotor());
+    xboxDrv.x().onTrue(PositionSubsystem.setPosition());
+    xboxDrv.y().onTrue(VelocitySubsystem.setVelocity());
+
+
+    // m_driverController.b().onTrue(IntakeSubsystem.runMotor());
 
   }
 

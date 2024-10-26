@@ -9,9 +9,24 @@ import org.littletonrobotics.junction.AutoLog;
 public interface PositionIO{
 
     @AutoLog
-    public static class PositionIOInputs {}
+    public static class PositionIOInputs {
+        
+        public boolean isPositionIOMotorConnected = true;
+
+        public double PositionMechs = 0.0;
+        public double VelocityRpm = 0.0;
+        public double AppliedVolts = 0.0;
+        public double SupplyCurrentAmps = 0.0;
+        public double TorqueCurrentAmps = 0.0;
+        public double TempCelsius = 0.0;
+    
+    }
+    public default void updateInputs(PositionIOInputs inputs) {}
 
     public default void setPosition(double pos) {}
 
     public default void runSetpointTicks(double setpointTicks) {}
+
+    
+    
 }

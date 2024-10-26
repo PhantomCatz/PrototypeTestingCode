@@ -6,19 +6,23 @@ package frc.robot.subsystems.PositionSubsystem;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utilities.LoggedTunableNumber;
+import frc.robot.subsystems.VelocitySubsystem.VelocityIOInputsAutoLogged;
 import lombok.RequiredArgsConstructor;
 
 public class PositionSubsystem extends SubsystemBase {
   
   private final PositionIO io;
+  private final PositionIOInputsAutoLogged inputs = new PositionIOInputsAutoLogged();
   private Position PositionType;
 
   /** Creates a new PositionSubsystem. */
   public PositionSubsystem() {
-        io = new PositionIO() {};
+        io = new PositionIOReal() {};
 
   }
 
@@ -36,10 +40,10 @@ public class PositionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-
-    io.setPosition(0);
-    io.runSetpointTicks(PositionType.getTargetMotionPosition());
+    io.updateInputs(inputs);
+    Logger.processInputs("Position", inputs);
+    // io.setPosition(0);
+    // io.runSetpointTicks(PositionType.getTargetMotionPosition());
   }
 
   public Command setPosition() {
