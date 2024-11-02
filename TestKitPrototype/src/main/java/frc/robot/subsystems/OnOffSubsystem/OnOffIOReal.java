@@ -14,8 +14,8 @@ import edu.wpi.first.math.util.Units;
 
 public class OnOffIOReal implements OnOffIO {
     
-  TalonFX talonMotor = new TalonFX(20);
-  CANSparkMax sparkMotor = new CANSparkMax(12, MotorType.kBrushless);
+  TalonFX talonMotor = new TalonFX(3);
+  // CANSparkMax sparkMotor = new CANSparkMax(12, MotorType.kBrushless);
   
   //Status Signals
   private final StatusSignal<Double> Position;
@@ -70,11 +70,11 @@ public class OnOffIOReal implements OnOffIO {
   public void toggleMotor() { //Toggles the motor speed between 0% and 100%
     if(talonMotor.get() != 0) {
       talonMotor.set(0);
-      sparkMotor.set(0);
+      // sparkMotor.set(0);
       System.out.println("0% speed set");
     } else {
       talonMotor.set(1);
-      sparkMotor.set(1);
+      // sparkMotor.set(1);
       System.out.println("100% speed set");
     }
   }

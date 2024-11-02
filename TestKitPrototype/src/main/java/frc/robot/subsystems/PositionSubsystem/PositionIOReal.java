@@ -10,6 +10,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -20,12 +21,12 @@ import edu.wpi.first.math.util.Units;
 
 public class PositionIOReal implements PositionIO {
     
-  TalonFX talonMotor = new TalonFX(1);
-  CANSparkMax sparkMotor = new CANSparkMax(30, MotorType.kBrushless);
+  TalonFX talonMotor = new TalonFX(2);
+  // CANSparkMax sparkMotor = new CANSparkMax(30, MotorType.kBrushless);
   //Control for Spark Max
   private PIDController shooterPivotFeedback = new PIDController(100, 0, 0, 0.02); //Prayer numbers
 
-  private final MotionMagicVoltage positionControl = new MotionMagicVoltage(0.0).withUpdateFreqHz(0.0);
+  private final PositionVoltage positionControl = new PositionVoltage(0).withUpdateFreqHz(0.0);
 
   private final TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -55,14 +56,20 @@ public class PositionIOReal implements PositionIO {
       TempCelsius
     );
 
-    config.Slot0.kP = 8;
+    config.Slot0.kP = 4;
     config.Slot0.kI = 0;
     config.Slot0.kD = 0;
 
     config.CurrentLimits.SupplyCurrentLimit = 60.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
+    config.MotionMagic.MotionMagicCruiseVelocity = 4;
+    config.MotionMagic.MotionMagicAcceleration = 8;
+    config.MotionMagic.MotionMagicJerk = 1600;
+
     talonMotor.getConfigurator().apply(config, 1.0);
+
+    talonMotor.setPosition(0);
 
   }
 
@@ -88,14 +95,16 @@ public class PositionIOReal implements PositionIO {
   @Override
   public void setPosition(double pos) //Set the motor position in mechanism rotations
   {
+    PositionSubsystem.position = pos;
     talonMotor.setControl(positionControl.withPosition(pos));
+    System.out.println(pos);
   }
   
   //Since spark max doesnt got a set position method, we calculate percent output and put method in periodic  
-  @Override
-  public void runSetpointTicks(double setpointTicks) {
-      double percentOutput = shooterPivotFeedback.calculate(sparkMotor.getEncoder().getPosition(), setpointTicks);
-      sparkMotor.set(percentOutput);
+  // @Override
+  // public void runSetpointTicks(double setpointTicks) {
+  //     double percentOutput = shooterPivotFeedback.calculate(sparkMotor.getEncoder().getPosition(), setpointTicks);
+  //     sparkMotor.set(percentOutput);
 
-  }
+  // }
 }

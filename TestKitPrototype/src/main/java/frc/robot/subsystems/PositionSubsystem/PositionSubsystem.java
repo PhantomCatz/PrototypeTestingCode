@@ -19,6 +19,7 @@ public class PositionSubsystem extends SubsystemBase {
   private final PositionIO io;
   private final PositionIOInputsAutoLogged inputs = new PositionIOInputsAutoLogged();
   private Position PositionType;
+  static double position;
 
   /** Creates a new PositionSubsystem. */
   public PositionSubsystem() {
@@ -42,11 +43,14 @@ public class PositionSubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Position", inputs);
-    // io.setPosition(0);
+    io.setPosition(position);
     // io.runSetpointTicks(PositionType.getTargetMotionPosition());
   }
 
   public Command setPosition() {
-    return runOnce(() -> io.setPosition(8));
+    return startEnd(() -> io.setPosition(10), () -> io.setPosition(0));
+    // return runOnce(() -> io.setPosition(100));
+
   }
 }
+

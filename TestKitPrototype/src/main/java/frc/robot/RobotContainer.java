@@ -58,9 +58,9 @@ public class RobotContainer {
 
     xboxDrv.a().onTrue(OnOffSubsystem.toggleOnOffMotor());
     xboxDrv.b().whileTrue(IntakeSubsystem.runMotor());
-    xboxDrv.x().onTrue(PositionSubsystem.setPosition());
-    xboxDrv.y().onTrue(VelocitySubsystem.setVelocity());
+    xboxDrv.x().toggleOnTrue(PositionSubsystem.setPosition());
 
+    xboxDrv.leftTrigger().toggleOnTrue(VelocitySubsystem.onVelocity());
 
     // m_driverController.b().onTrue(IntakeSubsystem.runMotor());
 

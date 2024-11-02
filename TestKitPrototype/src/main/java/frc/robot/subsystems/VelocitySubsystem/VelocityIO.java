@@ -13,7 +13,7 @@ public interface VelocityIO{
 
         public boolean isVelocityIOMotorConnected = true;
 
-        public static int motorPower;
+        public static int motorPower = 0;
 
         public double PositionMechs = 0.0;
         public double VelocityRpm = 0.0;

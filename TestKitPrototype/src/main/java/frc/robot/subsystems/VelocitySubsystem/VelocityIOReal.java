@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -17,12 +18,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class VelocityIOReal implements VelocityIO {
     
-  TalonFX talonMotor = new TalonFX(1);
+  TalonFX talonMotor = new TalonFX(2);
 
-  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(0.0);
- 
-  private final TalonFXConfiguration config = new TalonFXConfiguration();
-
+  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(60.0);
 
   // Status Signals
   private final StatusSignal<Double> Position;
@@ -34,6 +32,9 @@ public class VelocityIOReal implements VelocityIO {
 
   /** Creates a new IntakeIOReal. */
   public VelocityIOReal() {
+
+    TalonFXConfiguration config = new TalonFXConfiguration();
+
     Position = talonMotor.getPosition();
     Velocity = talonMotor.getVelocity();
     AppliedVolts = talonMotor.getMotorVoltage();
@@ -51,9 +52,11 @@ public class VelocityIOReal implements VelocityIO {
       TempCelsius
     );
 
-    config.Slot0.kP = 8;
+    talonMotor.optimizeBusUtilization(0, 1.0);
+
+    config.Slot0.kP = 0.17;
     config.Slot0.kI = 0;
-    config.Slot0.kD = 0;
+    config.Slot0.kD = 0.0006;
 
     config.CurrentLimits.SupplyCurrentLimit = 60.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -86,17 +89,10 @@ public class VelocityIOReal implements VelocityIO {
     talonMotor.setControl(
         velocityControl
             .withVelocity(Rpm / 60.0)
-            .withFeedForward(0)
+            .withFeedForward(2)
     );
+    System.out.println(Rpm);
     Logger.recordOutput("VelocityStuff", Rpm);
   }
 
-  @Override
-  public void toggleRunVelocity() {
-    if(VelocityIOInputs.motorPower != 0) {
-      VelocityIOInputs.motorPower = 0;
-    } else {
-      VelocityIOInputs.motorPower = 1;
-    }
-  }
 }

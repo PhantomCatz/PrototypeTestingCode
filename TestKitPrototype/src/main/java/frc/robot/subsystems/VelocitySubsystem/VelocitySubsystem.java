@@ -27,11 +27,11 @@ public class VelocitySubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Velocity", inputs);
-    io.runVelocity(VelocityIOInputs.motorPower);
     // This method will be called once per scheduler run
   }
 
-  public Command setVelocity(){
-    return runOnce(() -> io.toggleRunVelocity());
+  public Command onVelocity(){
+    return runOnce(() -> io.runVelocity(10));
   }
 }
+

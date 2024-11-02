@@ -17,8 +17,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class IntakeIOReal implements IntakeIO {
   
-  TalonFX talonMotor = new TalonFX(10);
-  CANSparkMax sparkMotor = new CANSparkMax(20, MotorType.kBrushless);
+  TalonFX talonMotor = new TalonFX(4);
+  // CANSparkMax sparkMotor = new CANSparkMax(20, MotorType.kBrushless);
   
   // Status Signals
   private final StatusSignal<Double> Position;
@@ -71,7 +71,7 @@ public class IntakeIOReal implements IntakeIO {
   @Override
   public void runMotor() {  
     talonMotor.set(IntakeIOInputs.speed);
-    sparkMotor.set(IntakeIOInputs.speed);
+    // sparkMotor.set(IntakeIOInputs.speed);
 
     Logger.recordOutput("Intake Motor Speed", IntakeIOInputs.speed); // Logs the motor speed and names it to "Intake Motor Speed" in AdvantageScope
 
