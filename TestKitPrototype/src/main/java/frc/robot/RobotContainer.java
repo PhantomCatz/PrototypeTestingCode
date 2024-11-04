@@ -30,7 +30,7 @@ public class RobotContainer {
   private static OnOffSubsystem OnOffSubsystem = new OnOffSubsystem();
   private static IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
   private static PositionSubsystem PositionSubsystem = new PositionSubsystem();
-  private static VelocitySubsystem VelocitySubsystem = new VelocitySubsystem();
+  private static VelocitySubsystem velocitySubsystem = new VelocitySubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private CommandXboxController xboxDrv = new CommandXboxController(0);
@@ -60,7 +60,7 @@ public class RobotContainer {
     xboxDrv.b().whileTrue(IntakeSubsystem.runMotor());
     xboxDrv.x().toggleOnTrue(PositionSubsystem.setPosition());
 
-    xboxDrv.leftTrigger().toggleOnTrue(VelocitySubsystem.onVelocity());
+    xboxDrv.leftTrigger().toggleOnTrue(velocitySubsystem.onVelocity());
 
     // m_driverController.b().onTrue(IntakeSubsystem.runMotor());
 

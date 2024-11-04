@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utilities.LoggedTunableNumber;
@@ -43,12 +44,17 @@ public class PositionSubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Position", inputs);
-    io.setPosition(position);
+    if(DriverStation.isDisabled()) {
+
+    } else {
+      io.setPosition(position);
+    }
+    Logger.recordOutput("Position/targetPosition", position);
     // io.runSetpointTicks(PositionType.getTargetMotionPosition());
   }
 
   public Command setPosition() {
-    return startEnd(() -> io.setPosition(10), () -> io.setPosition(0));
+    return startEnd(() -> position = 10, () -> position = 0);
     // return runOnce(() -> io.setPosition(100));
 
   }

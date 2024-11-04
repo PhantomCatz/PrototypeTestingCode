@@ -6,8 +6,10 @@ package frc.robot.subsystems.VelocitySubsystem;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Utilities.LoggedTunableNumber;
 import frc.robot.subsystems.OnOffSubsystem.OnOffIOReal;
 import frc.robot.subsystems.PositionSubsystem.PositionIO;
 import frc.robot.subsystems.VelocitySubsystem.VelocityIO.VelocityIOInputs;
@@ -16,6 +18,10 @@ public class VelocitySubsystem extends SubsystemBase {
 
   private final VelocityIO io;
   private final VelocityIOInputsAutoLogged inputs = new VelocityIOInputsAutoLogged();
+
+  private double targetRpm;
+
+  private LoggedTunableNumber tunableNumber = new LoggedTunableNumber("VelocitySetpositionRPM", 500);
 
 
   /** Creates a new VelocitySubsystem. */
@@ -28,10 +34,22 @@ public class VelocitySubsystem extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Velocity", inputs);
     // This method will be called once per scheduler run
+    if(DriverStation.isDisabled()) {
+
+    } else {
+      io.runVelocity(targetRpm);
+    }
+
+    Logger.recordOutput("Velocity", targetRpm);
   }
 
   public Command onVelocity(){
-    return runOnce(() -> io.runVelocity(10));
+    return startEnd(() -> targetRpm = tunableNumber.get(), () -> targetRpm = 0.0);
   }
+
+  // public Command setVelocityOff() {
+  //   return startEnd(null, null)
+  // }
+
 }
 

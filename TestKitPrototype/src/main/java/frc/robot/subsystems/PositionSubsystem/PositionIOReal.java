@@ -21,7 +21,7 @@ import edu.wpi.first.math.util.Units;
 
 public class PositionIOReal implements PositionIO {
     
-  TalonFX talonMotor = new TalonFX(2);
+  TalonFX talonMotor = new TalonFX(21);
   // CANSparkMax sparkMotor = new CANSparkMax(30, MotorType.kBrushless);
   //Control for Spark Max
   private PIDController shooterPivotFeedback = new PIDController(100, 0, 0, 0.02); //Prayer numbers
@@ -97,7 +97,7 @@ public class PositionIOReal implements PositionIO {
   {
     PositionSubsystem.position = pos;
     talonMotor.setControl(positionControl.withPosition(pos));
-    System.out.println(pos);
+    //System.out.println(pos);
   }
   
   //Since spark max doesnt got a set position method, we calculate percent output and put method in periodic  

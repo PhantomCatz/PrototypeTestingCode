@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class VelocityIOReal implements VelocityIO {
     
-  TalonFX talonMotor = new TalonFX(2);
+  TalonFX talonMotor = new TalonFX(4);
 
   private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(60.0);
 
@@ -52,7 +52,6 @@ public class VelocityIOReal implements VelocityIO {
       TempCelsius
     );
 
-    talonMotor.optimizeBusUtilization(0, 1.0);
 
     config.Slot0.kP = 0.17;
     config.Slot0.kI = 0;
@@ -62,6 +61,9 @@ public class VelocityIOReal implements VelocityIO {
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     talonMotor.getConfigurator().apply(config, 1.0);
+
+    talonMotor.optimizeBusUtilization(0, 1.0);
+
   }
 
   @Override
@@ -89,9 +91,7 @@ public class VelocityIOReal implements VelocityIO {
     talonMotor.setControl(
         velocityControl
             .withVelocity(Rpm / 60.0)
-            .withFeedForward(2)
     );
-    System.out.println(Rpm);
     Logger.recordOutput("VelocityStuff", Rpm);
   }
 
