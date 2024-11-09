@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -19,14 +20,15 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 
-public class PositionIOReal implements PositionIO {
+public class PositionIOKraken implements PositionIO {
     
-  TalonFX talonMotor = new TalonFX(21);
+  TalonFX talonMotor = new TalonFX(4);
   // CANSparkMax sparkMotor = new CANSparkMax(30, MotorType.kBrushless);
   //Control for Spark Max
   private PIDController shooterPivotFeedback = new PIDController(100, 0, 0, 0.02); //Prayer numbers
 
   private final PositionVoltage positionControl = new PositionVoltage(0).withUpdateFreqHz(0.0);
+  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
 
   private final TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -38,7 +40,7 @@ public class PositionIOReal implements PositionIO {
   private final StatusSignal<Double> TempCelsius;
   
   
-  public PositionIOReal(){
+  public PositionIOKraken(){
     Position = talonMotor.getPosition();
     Velocity = talonMotor.getVelocity();
     AppliedVolts = talonMotor.getMotorVoltage();
@@ -84,7 +86,7 @@ public class PositionIOReal implements PositionIO {
                 TorqueCurrent,
                 TempCelsius)
             .isOK();
-    inputs.PositionMechs = Units.rotationsToRadians(Position.getValueAsDouble());
+    inputs.PositionMechs = Position.getValueAsDouble();
     inputs.VelocityRpm = Velocity.getValueAsDouble() * 60.0;
     inputs.AppliedVolts = AppliedVolts.getValueAsDouble();
     inputs.SupplyCurrentAmps = SupplyCurrent.getValueAsDouble();
@@ -107,4 +109,27 @@ public class PositionIOReal implements PositionIO {
   //     sparkMotor.set(percentOutput);
 
   // }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    config.Slot0.kP = kP;
+    config.Slot0.kI = kI;
+    config.Slot0.kD = kD;
+    System.out.println("kP: " + kP + " kI: " + kI + " kD: " + kD);
+    talonMotor.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void runCharacterizationMotor(double input) {
+    talonMotor.setControl(voltageControl.withOutput(input));
+  }
+
+  @Override
+  public void setFF(double kS, double kV, double kA) {
+    config.Slot0.kS = kS;
+    config.Slot0.kV = kV;
+    config.Slot0.kA = kA;
+    System.out.println("kS: " + kS + " kV: " + kV + " kA: " + kA);
+    talonMotor.getConfigurator().apply(config);
+  }
 }

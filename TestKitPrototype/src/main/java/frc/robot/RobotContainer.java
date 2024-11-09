@@ -9,10 +9,8 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeSubsystem;
-import frc.robot.subsystems.OnOffSubsystem.OnOffSubsystem;
 import frc.robot.subsystems.PositionSubsystem.PositionSubsystem;
 import frc.robot.subsystems.VelocitySubsystem.VelocitySubsystem;
-import frc.robot.subsystems.OnOffSubsystem.OnOffIOReal;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -27,7 +25,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  private static OnOffSubsystem OnOffSubsystem = new OnOffSubsystem();
   private static IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
   private static PositionSubsystem PositionSubsystem = new PositionSubsystem();
   private static VelocitySubsystem velocitySubsystem = new VelocitySubsystem();
@@ -56,8 +53,7 @@ public class RobotContainer {
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //     .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    xboxDrv.a().onTrue(OnOffSubsystem.toggleOnOffMotor());
-    xboxDrv.b().whileTrue(IntakeSubsystem.runMotor());
+    xboxDrv.b().toggleOnTrue(IntakeSubsystem.runMotor());
     xboxDrv.x().toggleOnTrue(PositionSubsystem.setPosition());
 
     xboxDrv.leftTrigger().toggleOnTrue(velocitySubsystem.onVelocity());

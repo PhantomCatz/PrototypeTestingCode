@@ -22,14 +22,25 @@ public class PositionSubsystem extends SubsystemBase {
   private final PositionIOInputsAutoLogged inputs = new PositionIOInputsAutoLogged();
   private Position PositionType;
   static double position;
-  static LoggedTunableNumber tunnablePos = new LoggedTunableNumber("Position/TunnablePosition", 10);
+  static LoggedTunableNumber tunnablePos = new LoggedTunableNumber("Position/TunnablePosition", 1);
+  static LoggedTunableNumber kP = new LoggedTunableNumber("Position/kP", 0.17);
+  static LoggedTunableNumber kI = new LoggedTunableNumber("Position/kI", 0.0);
+  static LoggedTunableNumber kD = new LoggedTunableNumber("Position/kD", 0.0006);
+
+  static LoggedTunableNumber kS = new LoggedTunableNumber("Position/kS", 0);
+  static LoggedTunableNumber kV = new LoggedTunableNumber("Position/kV", 0);
+  static LoggedTunableNumber kA = new LoggedTunableNumber("Position/kA", 0);
 
   /** Creates a new PositionSubsystem. */
   public PositionSubsystem() {
-        io = new PositionIOReal() {};
+        // io = new PositionIOKraken() {};
+        io = new PositionIOSparkMax() {};
 
+        io.setPID(kP.getAsDouble(), kI.getAsDouble(), kD.getAsDouble());
   }
-
+  //==========================================================//
+  // ^^ Hallo make sure you set this to the correct motor ^^  //
+  //==========================================================//
   @RequiredArgsConstructor
   public enum Position {
 
@@ -46,6 +57,7 @@ public class PositionSubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Position", inputs);
+    // System.out.println(position);
     if(DriverStation.isDisabled()) {
 
     } else {
@@ -55,7 +67,7 @@ public class PositionSubsystem extends SubsystemBase {
   }
 
   public Command setPosition() {
-    return startEnd(() -> position = tunnablePos.get(), () -> position = Position.ZERO.getTargetMotionPosition());
+    return startEnd(() -> position = Position.TUNNABLE.getTargetMotionPosition(), () -> position = Position.ZERO.getTargetMotionPosition());
   }
 }
 

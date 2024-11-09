@@ -29,4 +29,10 @@ public interface VelocityIO{
     public default void runVelocity(double Rpm) {}
 
     public default void toggleRunVelocity() {}
+
+    public default void setPID(double kP, double kI, double kD) {}
+
+    public default void setFF(double kS, double kV, double kA) {}
+    
+    public default void runCharacterizationMotor(double input) {}
 }

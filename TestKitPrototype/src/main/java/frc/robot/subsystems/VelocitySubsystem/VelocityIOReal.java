@@ -9,8 +9,10 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.util.Units;
@@ -18,10 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class VelocityIOReal implements VelocityIO {
     
-  TalonFX talonMotor = new TalonFX(4);
+  TalonFX talonMotor = new TalonFX(5);
 
   private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(60.0);
-
+  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
   // Status Signals
   private final StatusSignal<Double> Position;
   private final StatusSignal<Double> Velocity;
@@ -29,12 +31,12 @@ public class VelocityIOReal implements VelocityIO {
   private final StatusSignal<Double> SupplyCurrent;
   private final StatusSignal<Double> TorqueCurrent;
   private final StatusSignal<Double> TempCelsius;
+  
+  TalonFXConfiguration config = new TalonFXConfiguration();
+
 
   /** Creates a new IntakeIOReal. */
   public VelocityIOReal() {
-
-    TalonFXConfiguration config = new TalonFXConfiguration();
-
     Position = talonMotor.getPosition();
     Velocity = talonMotor.getVelocity();
     AppliedVolts = talonMotor.getMotorVoltage();
@@ -95,4 +97,27 @@ public class VelocityIOReal implements VelocityIO {
     Logger.recordOutput("VelocityStuff", Rpm);
   }
 
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    config.Slot0.kP = kP;
+    config.Slot0.kI = kI;
+    config.Slot0.kD = kD;
+    System.out.println("kP: " + kP + " kI: " + kI + " kD: " + kD);
+    talonMotor.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void runCharacterizationMotor(double input) {
+    talonMotor.setControl(voltageControl.withOutput(input));
+  }
+
+  @Override
+  public void setFF(double kS, double kV, double kA) {
+    config.Slot0.kS = kS;
+    config.Slot0.kV = kV;
+    config.Slot0.kA = kA;
+    System.out.println("kS: " + kS + " kV: " + kV + " kA: " + kA);
+    talonMotor.getConfigurator().apply(config);
+  }
 }

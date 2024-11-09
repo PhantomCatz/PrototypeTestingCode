@@ -11,8 +11,6 @@ public interface IntakeIO{
     @AutoLog
     public static class IntakeIOInputs {
       //Store variables here
-      public static double speed = 10;
-
       public boolean isIntakeIOMotorConnected = true;
 
       public double PositionMechs = 0.0;
@@ -24,9 +22,15 @@ public interface IntakeIO{
 
     }
 
-    public default void runMotor() {}
+    public default void runMotor(double Speed) {}
+
+    public default void runSparkMax(double Speed) {}
 
     public default void updateInputs(IntakeIOInputs inputs) {}
 
+    public default void setPID(double kP, double kI, double kD) {}
 
+    public default void setFF(double kS, double kV, double kA) {}
+    
+    public default void runCharacterizationMotor(double input) {}
 }

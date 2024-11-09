@@ -8,6 +8,8 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 
@@ -17,8 +19,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class IntakeIOReal implements IntakeIO {
   
-  TalonFX talonMotor = new TalonFX(4);
-  // CANSparkMax sparkMotor = new CANSparkMax(20, MotorType.kBrushless);
+  TalonFX talonMotor = new TalonFX(21);
+  CANSparkMax sparkMotor = new CANSparkMax(20, MotorType.kBrushless);
   
   // Status Signals
   private final StatusSignal<Double> Position;
@@ -27,6 +29,11 @@ public class IntakeIOReal implements IntakeIO {
   private final StatusSignal<Double> SupplyCurrent;
   private final StatusSignal<Double> TorqueCurrent;
   private final StatusSignal<Double> TempCelsius;
+
+  private final TalonFXConfiguration config = new TalonFXConfiguration();
+
+  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
+
 
   /** Creates a new IntakeIOReal. */
   public IntakeIOReal() {
@@ -69,11 +76,42 @@ public class IntakeIOReal implements IntakeIO {
   
   //Sets the motor speed to "speed" found in IntakeIO. Currently the number is 1000%
   @Override
-  public void runMotor() {  
-    talonMotor.set(IntakeIOInputs.speed);
+  public void runMotor(double Speed) {  
+    talonMotor.set(Speed);
     // sparkMotor.set(IntakeIOInputs.speed);
 
-    Logger.recordOutput("Intake Motor Speed", IntakeIOInputs.speed); // Logs the motor speed and names it to "Intake Motor Speed" in AdvantageScope
+    Logger.recordOutput("Intake Motor Speed", Speed); // Logs the motor speed and names it to "Intake Motor Speed" in AdvantageScope
 
+  }
+
+  @Override
+  public void runSparkMax(double Speed) {  
+    sparkMotor.set(Speed);
+
+    Logger.recordOutput("SparkMax Intake Motor Speed", Speed); // Logs the motor speed and names it to "Intake Motor Speed" in AdvantageScope
+
+  }
+
+  @Override
+  public void setPID(double kP, double kI, double kD) {
+    config.Slot0.kP = kP;
+    config.Slot0.kI = kI;
+    config.Slot0.kD = kD;
+    System.out.println("kP: " + kP + " kI: " + kI + " kD: " + kD);
+    talonMotor.getConfigurator().apply(config);
+  }
+
+  @Override
+  public void runCharacterizationMotor(double input) {
+    talonMotor.setControl(voltageControl.withOutput(input));
+  }
+
+  @Override
+  public void setFF(double kS, double kV, double kA) {
+    config.Slot0.kS = kS;
+    config.Slot0.kV = kV;
+    config.Slot0.kA = kA;
+    System.out.println("kS: " + kS + " kV: " + kV + " kA: " + kA);
+    talonMotor.getConfigurator().apply(config);
   }
 }
