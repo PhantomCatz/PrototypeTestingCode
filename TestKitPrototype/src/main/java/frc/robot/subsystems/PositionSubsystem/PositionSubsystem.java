@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.PositionSubsystem;
 
+import java.lang.reflect.Method;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -21,6 +22,7 @@ public class PositionSubsystem extends SubsystemBase {
   private final PositionIOInputsAutoLogged inputs = new PositionIOInputsAutoLogged();
   private Position PositionType;
   static double position;
+  static LoggedTunableNumber tunnablePos = new LoggedTunableNumber("Position/TunnablePosition", 10);
 
   /** Creates a new PositionSubsystem. */
   public PositionSubsystem() {
@@ -31,8 +33,8 @@ public class PositionSubsystem extends SubsystemBase {
   @RequiredArgsConstructor
   public enum Position {
 
-    HELLO(() -> 0.0),
-    TUNNABLE(new LoggedTunableNumber("TunnablePosition", 10));
+    ZERO(() -> 0.0),
+    TUNNABLE(tunnablePos);
 
     private final DoubleSupplier motionType;
     private double getTargetMotionPosition() {
@@ -50,13 +52,10 @@ public class PositionSubsystem extends SubsystemBase {
       io.setPosition(position);
     }
     Logger.recordOutput("Position/targetPosition", position);
-    // io.runSetpointTicks(PositionType.getTargetMotionPosition());
   }
 
   public Command setPosition() {
-    return startEnd(() -> position = 10, () -> position = 0);
-    // return runOnce(() -> io.setPosition(100));
-
+    return startEnd(() -> position = tunnablePos.get(), () -> position = Position.ZERO.getTargetMotionPosition());
   }
 }
 
